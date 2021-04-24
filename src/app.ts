@@ -1,14 +1,15 @@
+import { Server } from 'node:http';
 import express, { Application } from 'express';
 
 import helmet from 'helmet';
 import compression from 'compression';
 import cors from 'cors';
 
+import Connection from './db/connection';
 import Config, { IConfig } from './config';
 import { errorMiddleware } from './middlewares';
 import { BaseModule } from './modules';
 import { Knex } from 'knex';
-import Connection from './db/connection';
 
 class App<T extends BaseModule> {
   app: Application;
@@ -25,13 +26,13 @@ class App<T extends BaseModule> {
     this.initializeErrorHandling();
   }
 
-  listen() {
-    this.app.listen(this.config.APP_PORT, () => {
+  listen(port?: number): Server {
+    return this.app.listen(port || this.config.APP_PORT, () => {
       console.log(`server started at http://localhost:${this.config.APP_PORT}`);
     });
   }
 
-  getServer() {
+  getServer(): Application {
     return this.app;
   }
 
